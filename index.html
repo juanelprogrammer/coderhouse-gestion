@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script defer src="./lib.js"></script>
+    <script defer src="./clases.js"></script>
+    <script src="./demo.js"></script>
+    <script defer src="./app.js"></script>
+    <title>Gestión</title>
+  </head>
+  <body>
+    <nav>
+      <h1>Gestión</h1>
+      <ul>
+        <li>
+          <a href="index.html"><button>Home</button></a>
+        </li>
+        <li>
+          <a href="productos.html"><button>Productos</button></a>
+        </li>
+        <li>
+          <a href="pedidos.html"><button>Pedidos</button></a>
+        </li>
+        <li>
+          <a href="proveedores.html"><button>Proveedores</button></a>
+        </li>
+        <li>
+          <button class="dolar" onclick="tool.dolar()">Ver dolar</button>
+        </li>
+      </ul>
+    </nav>
+    <div id="contenedor">
+      <h1>¡Bienvenido!</h1>
+      <p>Podes importar productos y proveedores DEMO para simular mejor la experiencia:</p>
+      <button id="importar-prod">Importar Productos DEMO</button>
+      <button id="importar-prov">Importar Proveedores DEMO</button>
+      <p>Luego, podes verlos, registrar ventas de unidades e ingresos (compras) a proveedores.</p>
+      <p><a href="pedidos.html">¡Hacé un pedido!</p></a>
+      <p>Elegí el proveedor, sus productos y la fecha estimada de arribo.</p>
+
+      <div id="descripcion">
+        <p>Con algunos años vendiendo por Mercado Libre fui descubriendo muchas funciones que las app de gestión de ML no tienen.</p>
+        <p>Al tratar con pocos productos es facil, masssssomenos estimás cuando te vuelve a entrar y oferta-demanda vas viendo el precio que le ponés.</p>
+        <p>¿Y si son 500 productos? ¿30 proveedores? Lo más dificil no es manejar los pedidos, sino controlar la demanda de tus productos. Saber cuando y cuanto llega de cada producto es clave.</p>
+        <p>La intención final de esta app NO es manejar el stock y precio, ya hay sistemas de gestión que lo hacen muy bien y es posible conectar con sus APIs</p>
+        <p>La intención de esta app es saber en todo momento cuanto falta para que un producto vuelva a ingresar.</p>
+        <p>Y así (desarrollando a futuro) poder alertar si, por ejemplo: se vendieron muchas unidades faltando mucho tiempo para el próximo arribo, o si me está ingresando la semana que viene y tengo cien mil unidades de un producto</p>
+        <p>*Espero incorporar:</p>
+        <p>- Que de cada producto puedas hacer un nuevo pedido</p>
+        <p>- Historial ventas (esto lo traigo desde la api del sistema de gestión)</p>
+        <p>- Función "quiebreStock()" analiza todos mis productos y según sus ventas y fecha de arribo para recomendarme subir o bajar de precio (se vende o no se vende)</p>
+        <p>- Tener notificaciones al inicio (apenas entras, te dice lo que se vendió desde tu última visita)</p>
+        <p>- Cambiar el diseño asqueroso este</p>
+      </div>
+    </div>
+  </body>
+</html>
