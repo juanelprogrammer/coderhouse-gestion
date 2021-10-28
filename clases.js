@@ -1,5 +1,3 @@
-
-
 class Producto {
   constructor(obj) {
     this.id = productos.length + 1

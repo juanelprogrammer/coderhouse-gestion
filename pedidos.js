@@ -47,20 +47,6 @@ const divResultadoProv = document.querySelector('#resultado-busqueda-prov')
 const divResultadoProd = document.querySelector('#resultado-busqueda-prod')
 
 
-
-// inputProv.onfocus = () => {
-//   if (!inputProv.readOnly) {
-//     divResultadoProv.style.display = 'block'
-//     }
-// }
-
-// inputProd.onfocus = () => {
-//   if (!inputProd.readOnly) {
-//   divResultadoProd.style.display = 'block'
-//   }
-// }
-
-
 //cuando tecleo en el input del proveedor me va mostrando el resultado
 const productosFiltrados = []
 inputProv.addEventListener('input', () => {

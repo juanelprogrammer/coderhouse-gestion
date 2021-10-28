@@ -3,6 +3,10 @@ const proveedores = []
 const productosLs = JSON.parse(localStorage.getItem("productos"))
 const proveedoresLs = JSON.parse(localStorage.getItem("proveedores"))
 
+const modalContainer = document.getElementById("modal-container")
+const mostrarModal = () => {
+  modalContainer.classList.toggle("mostrar")
+}
 
 //veo si el usuario ya tiene guardado algo en localstorage y si tiene los pusheo a mis arrays
 if (productosLs) {
@@ -30,3 +34,5 @@ const btnImportarProd = document.querySelector('#importar-prod')
 const btnImportarProv = document.querySelector('#importar-prov')
 btnImportarProd.addEventListener('click', () => importarProductos() )
 btnImportarProv.addEventListener('click', () => importarProveedores() )
+
+const tool = new Tool()
