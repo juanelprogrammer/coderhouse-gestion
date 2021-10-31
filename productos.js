@@ -46,16 +46,87 @@ const altaProducto = () => {
   //renderizo el form 
   modalContainer.innerHTML = render.formAltaProducto()
 
-  //agrego proveedores al listado
-  //si no existen proveedores, lo indico
-  const provSelect = document.querySelector("#proveedores")
-  if (!proveedores.length) {
-    provSelect.innerHTML += `<option value="sin-proveedor">No existen proveedores</option>`
-  } else {
-    proveedores.forEach((prov) => {  
-      provSelect.innerHTML += `<option value="${prov.nombre}">${prov.nombre}</option>`
+
+  const inputProv = document.querySelector('#input-prov')
+  const divResultadoProv = document.querySelector('#resultado-busqueda-prov')
+
+
+  inputProv.addEventListener('input', () => {
+    //limpio el resultado de la busqueda y lo hago visible
+    divResultadoProv.innerHTML = ''
+    divResultadoProv.style.visibility = 'visible'
+    //busco lo q tipea el user y lo tiro en el resultado de la busqueda
+    const busqueda = tool.buscarProveedor(inputProv.value)
+    
+    if (!proveedores.length) {
+      divResultadoProv.innerHTML += `<option value="sin-proveedor">No existen proveedores</option>`
+    } else if (inputProv.value !== '') {
+      busqueda.forEach((prov) => {
+        divResultadoProv.innerHTML += `<option value="${prov.id}">${prov.nombre}</option>`
+      })}
+      
+      //agarro las opciones que filtra la busqueda del usuario
+      const options = Array.from(document.querySelectorAll('#resultado-busqueda-prov option'))
+      
+    //agrego un eventlistener a cada option, para hacerlos clickeables sin el onclick del html
+    //al hacer click, lo pongo como valor del input
+    options.forEach((option) => {
+      option.addEventListener('click', () => {
+        //las oculto para que no molesten
+        divResultadoProv.style.visibility = 'hidden'
+        //declaro proveedor
+        const proveedor = proveedores.find((prov) => prov.id == option.value)
+
+        //pongo el proveedor como valor del input y lo hago readonly
+        inputProv.value = proveedor.nombre
+        // inputProv.readOnly = true
+  
+      })
     })
-  }
+  })
+
+
+  inputProv.ondblclick = () => {
+    //limpio el resultado de la busqueda y lo hago visible
+    divResultadoProv.innerHTML = ''
+    divResultadoProv.style.visibility = 'visible'
+    
+
+    if (!proveedores.length) {
+      divResultadoProv.innerHTML += `<option value="sin-proveedor">No existen proveedores</option>`
+      divResultadoProv.innerHTML += `<input type="button" value="Ir a Proveedores" onclick="window.location.href='./proveedores.html'">`
+
+    } else {
+      proveedores.forEach((prov) => {
+        divResultadoProv.innerHTML += `<option value="${prov.id}">${prov.nombre}</option>`
+      })
+      
+      divResultadoProv.innerHTML += `<input type="button" value="Ir a Proveedores" onclick="window.location.href='./proveedores.html'">`
+      
+    
+    }
+
+ 
+  //agrego un eventlistener a cada option, para hacerlos clickeables sin el onclick del html  
+  const options = Array.from(document.querySelectorAll('#resultado-busqueda-prov option'))
+  options.forEach((option) => {
+    option.addEventListener('click', () => {
+      //las oculto para que no molesten
+      divResultadoProv.style.visibility = 'hidden'
+      //declaro proveedor
+      const proveedor = proveedores.find((prov) => prov.id == option.value)
+
+      //pongo el proveedor como valor del input y lo hago readonly
+      inputProv.value = proveedor.nombre
+      inputProv.setAttribute('datavalue', proveedor.id)
+      // inputProv.readOnly = true
+
+    })
+  })
+ 
+ }
+ 
+
 
   //agrego categorías al listado
   const categorias = []
@@ -68,10 +139,18 @@ const altaProducto = () => {
   )
 
   //muestro las categorías
+
+  if (!categoriasSinDuplicado.length) {
+    const catSelect = document.querySelector("#categorias")
+    catSelect.innerHTML += `<option value="sin-categoria">Se tiene que poder crear categorias :(</option>`
+
+  } else {
+
   categoriasSinDuplicado.forEach((cat) => {
     const catSelect = document.querySelector("#categorias")
-    catSelect.innerHTML += `<option value"${cat}">${cat}</option>`
+    catSelect.innerHTML += `<option value="${cat}">${cat}</option>`
   })
+  }
 
   //capturo campos
   let costo = document.querySelector("#costo")
@@ -128,12 +207,11 @@ const altaProducto = () => {
 
     let nombre = document.querySelector("#nombre-producto")
     let sku = document.querySelector("#sku")
-    let categoria = document.querySelector("#categoria")
-    let proveedor = document.querySelector("#proveedor")
+    let categoria = document.querySelector("#categorias")
+    let proveedor = document.querySelector("#input-prov")
     let descripcion = document.querySelector("#descripcion")
     let stock = document.querySelector("#stock-producto")
 
-    console.log(nombre.value, sku.value, proveedor.value)
     
     if (!nombre.value || !sku.value || !proveedor.value) {
       e.preventDefault()
@@ -184,7 +262,6 @@ const altaProducto = () => {
 //ordenar tabla productos
 const ordenarSelect = document.querySelector("#ordenar-productos")
 ordenarSelect.addEventListener("change", () => {
-  console.log(ordenarSelect.value)
   mostrarArray(tool.ordenar(productos))
 })
 
@@ -226,19 +303,14 @@ const mostrarArray = (array) => {
 mostrarArray(productos)
 
 const verMas = (itemId) => {
+
   const producto = productos.find((prod) => prod.id === itemId)
   const arribos = producto.fechaLlegada()
-  const historial = historialVentas.filter((hist) => hist.itemId === itemId)
+  
   const fechaArribos = arribos.map((arribo) => {
     
     return tool.formatoDate(arribo)
     
-    
-    // let date = new Date(arribo)
-    // let dia = date.getDate()
-    // let mes = date.getMonth() + 1
-    // let anio = date.getFullYear()
-    // return dia + '/' + mes + '/' + anio 
   })
   mostrarModal()
   if (!arribos.length) {
@@ -257,6 +329,7 @@ const verMas = (itemId) => {
         <h2>${producto.datos.nombre}</h2> 
         
         <h4>Faltan ${producto.fechaLlegada('dias')} días para que ingrese</h4>  
+       
         <h3>Próximos arribos:</h3>
           <p>${fechaArribos}</p>
                   
@@ -266,12 +339,12 @@ const verMas = (itemId) => {
       </div>`
 
   }
-  const divHistorial = document.querySelector('#historial-venta')
-  historial.forEach((hist) => {
-    divHistorial.innerHTML += `
-    <p>Fecha: ${hist.fecha} Cantidad: ${hist.cantidad}</p>
-    `
-  })
+  // const divHistorial = document.querySelector('#historial-venta')
+  // historial.forEach((hist) => {
+  //   divHistorial.innerHTML += `
+  //   <p>Fecha: ${hist.fecha} Cantidad: ${hist.cantidad}</p>
+  //   `
+  // })
       const salir = document.getElementById("btn-salir")
       salir.addEventListener("click", () => {
         modalContainer.classList.toggle("mostrar")
@@ -328,7 +401,6 @@ const comprarById = (itemId) => {
 
   btnAceptar.addEventListener("click", () => {
     let cantidad = parseInt(inputCantidad.value)
-    console.log(cantidad)
     proveedor.comprar(producto.id, cantidad)
     modalContainer.classList.toggle("mostrar")
     mostrarArray(productos)
@@ -339,7 +411,7 @@ const comprarById = (itemId) => {
 //esto todavía no funciona
 const editarById = (itemId) => {
   let producto = productos.find((prod) => prod.id === itemId)
-  // console.log(producto)
+
   mostrarModal()
 
   modalContainer.innerHTML = `
@@ -398,7 +470,7 @@ const editarById = (itemId) => {
   let iva = document.querySelector("#iva-producto").value
   let stock = document.querySelector("#producto-stock").value
 
-  console.log("producto antes", producto)
+
 
   const btnGuardar = document.getElementById("btn-guardar")
   btnGuardar.addEventListener("click", (e) => {
@@ -411,7 +483,7 @@ const editarById = (itemId) => {
     producto.iva = iva
     producto.stock = stock
 
-    console.log("producto después", producto)
+
   })
 
   const btnCancelar = document.getElementById("btn-cancelar")

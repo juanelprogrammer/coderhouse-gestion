@@ -152,7 +152,7 @@ const altaProveedor = () => {
   btnGuardar.addEventListener("click", (e) => {
     e.preventDefault()
     const inputNombre = document.querySelector("#nombre-proveedor").value
-    console.log(inputNombre)
+
     if (!inputNombre) {
       e.preventDefault()
       validacionDiv.innerText = "No elegiste un nombre para el proveedor"

@@ -28,7 +28,7 @@ class Producto {
       historialVentas.push(new HistorialVenta(historial))
       tool.guardarLs("historial-ventas", historialVentas)
 
-      console.log(`Vendiste ${cantidad} ${this.datos.nombre}`)
+     
   }
   
   //devuelve array con las fechas de llegada del producto según los pedidos
@@ -92,11 +92,7 @@ class Proveedor {
     let listado = this.listarProductos()
     let producto = listado.find((prod) => prod.id === id)
     producto.stock = producto.stock + cantidad
-    console.log(
-      `compraste ${cantidad} unidades de ${producto.datos.nombre} a ${
-        producto.costo * cantidad
-      }`
-    )
+ 
   }
 }
 

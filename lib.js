@@ -12,16 +12,18 @@ class Render {
               <label for="sku">SKU</label>
                       <input type="text" id="sku" value="">
               <label for="categorias">Categoría</label>
-              <input type="text" list="categorias" />
-              <datalist id="categorias">
-               
-              </datalist>
-              </select>
+              <select id="categorias">
+
+              </select><br>
               <label for="proveedores">Proveedor</label>
-              <input type="text" list="proveedores" />
-              <datalist id="proveedores">
-               
-              </datalist><br>
+              <div class="dropdown">
+              <input type="text" autocomplete="off" placeholder="Buscar... (Doble Click para mostrar todos)" id="input-prov">
+              <div id="resultado-busqueda-prov">
+              
+              
+              </div>
+            </div>
+             
               <label for="descripcion">Descripción</label>
                       <input type="text" id="descripcion"><br>
               <label for="precio-final">Precio Final</label>
@@ -147,7 +149,6 @@ class Tool {
     //funcion calcula precio final para ir mostrandolo
     calcularPrecioFinal(costo, iva, rentabilidad) {
         let total = costo + (costo * iva) / 100
-        console.log(total)
         let precioFinal = total + (total * rentabilidad) / 100
         return precioFinal.toFixed(2)
       }
