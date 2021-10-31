@@ -43,7 +43,8 @@ table {
   background-color: #005f96;
   border-spacing: 0.5rem;
   border-collapse: collapse;
-  min-width: 100%;
+  justify-items: center;
+  min-width: 80%;
 }
 
 .fa-search{
@@ -207,6 +208,7 @@ table span {
 }
 
 #resultado-busqueda-prov , #resultado-busqueda-prod{
+  visibility: hidden;
   display: block;
   position: absolute;
   background-color: #f6f6f6;
@@ -237,4 +239,9 @@ table span {
   width: 50%;
   font-style: italic;
   
+}
+
+#tabla-productos button {
+  font-size: 0.7rem;
+  padding: 2px;
 }

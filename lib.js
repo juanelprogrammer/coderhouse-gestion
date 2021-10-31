@@ -48,7 +48,7 @@ class Render {
         <form id="form-pedido">
                         <label for="proveedores">Proveedor</label>
                         <div class="dropdown">
-                        <input type="text" autocomplete="off" placeholder="Buscar..." id="input-prov">
+                        <input type="text" autocomplete="off" placeholder="Buscar... (Doble Click para mostrar todos)" id="input-prov">
                         <div id="resultado-busqueda-prov">
                         
                         
@@ -64,7 +64,7 @@ class Render {
                         
                         <label for="productos">Producto</label>
                         <div class="dropdown">
-                        <input type="text" autocomplete="off" placeholder="Buscar..." id="input-prod">
+                        <input type="text" autocomplete="off" placeholder="Buscar... (Doble Click para mostrar todos)" id="input-prod">
                         <div id="resultado-busqueda-prod">
                         
                         
