@@ -13,13 +13,16 @@ class Producto {
     this.iva = parseFloat(obj.iva)
     this.stock = parseInt(obj.stock)
     this.vendidos = obj.vendidos
-    //booleano que indica si hay stock bajo o no
+    //booleano que indica si hay stock bajo
     this.bajoStock = this.stock <= 5
+    //array que va a contener todos los cambios q se hagan en el producto (cuando se vende 1 registro el stock, la rent y precio de venta y la fecha, por ej.)
+    //cuando cambio la renta me registra ese cambio junto con la fecha y el stock en el momento del cambio
+    this.cambios = []
   }
   precioFinal() {
     let total = this.costo + (this.costo * this.iva) / 100
     let precioFinal = total + (total * this.rentabilidad) / 100
-    return precioFinal.toFixed(2)
+    return parseFloat(precioFinal)
   }
   vender(cantidad) {
       this.stock -= cantidad
@@ -27,10 +30,7 @@ class Producto {
       const historial = {itemId: this.id, cantidad: cantidad, fecha: new Date()}
       historialVentas.push(new HistorialVenta(historial))
       tool.guardarLs("historial-ventas", historialVentas)
-
-     
-  }
-  
+    }
   //devuelve array con las fechas de llegada del producto según los pedidos
   fechaLlegada(dias) {
     //inicio mi array
@@ -72,6 +72,7 @@ class Producto {
   return fechasFiltradas
   }
 
+
 }
 
 class Proveedor {
@@ -83,7 +84,7 @@ class Proveedor {
   }
   listarProductos() {
     let listado = productos.filter(
-      (producto) => producto.datos.proveedor === this.nombre
+      (producto) => producto.datos.proveedor === this.id
     )
 
     return listado
@@ -105,22 +106,56 @@ class Pedido {
     this.arribo = obj.arribo
     this.productos = obj.productos
     this.observaciones = obj.observaciones
+    this.ingresado = obj.ingresado
+    this.fechaIngreso = ''    
   }
-  diasFaltan() {
+  diasFaltan(ms) {
     const arribo = new Date(this.arribo)
     const hoy = new Date()
+    const msLeft = arribo.getTime() - hoy.getTime()
     const diasLeft = (arribo.getTime() - hoy.getTime()) / (1000 * 3600 * 24)
+    if(ms === 'ms') {
+
+      return msLeft
+    } else {
     return Math.round(diasLeft)
+    }
+  }
+
+  //estaria bueno que sea una propiedad pero no puedo llamar al metodo diasFaltan desde el constructor (creo)
+  arribado() {
+    return this.diasFaltan('ms') < 0
+  }
+
+
+  ingresar() {
+    
+    if(this.arribado() && !this.ingresado) {
+      const proveedor = proveedores.find((prov) => prov.id === this.proveedor)
+      this.productos.forEach((prod) => {
+        //compro cada producto al proveedor para ingresarlo a mi stock
+        proveedor.comprar(prod.productoId, prod.cantidad)
+        //marco el pedido como ingresado
+        this.ingresado = true
+        //actulizo ls
+        tool.guardarLs("productos", productos)
+        tool.guardarLs("pedidos", pedidos)
+        
+        
+      })
+    }
   }
 }
+
 
 
 //todavía no implementado :(
 class HistorialVenta {
   constructor(obj){
+    this.fecha = new Date()
+    this.id = this.itemId + '-' + this.fecha.getTime()
     this.itemId = obj.itemId
     this.cantidad = obj.cantidad
-    this.fecha = obj.fecha
   }
   //la idea es agregar métodos que faciliten la visualizacion
 }

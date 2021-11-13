@@ -18,7 +18,7 @@ let productosDemo = [
     datos: {
       nombre: "Guitarra Criolla",
       categoria: "Cuerdas",
-      proveedor: "Guitarrín",
+      proveedor: 1,
       descripcion: "Guitarra nacional",
     },
     sku: "GUIT001",
@@ -32,7 +32,7 @@ let productosDemo = [
     datos: {
       nombre: "Ukelele",
       categoria: "Cuerdas",
-      proveedor: "Guitarrín",
+      proveedor: 1,
       descripcion: "Ukelele soprano",
     },
     sku: "UKE001",
@@ -46,7 +46,7 @@ let productosDemo = [
     datos: {
       nombre: "Sintetizador Krog 151",
       categoria: "Sintetizadores",
-      proveedor: "tuSynth",
+      proveedor: 2,
       descripcion: "sintetizador monofónico",
     },
     sku: "SNT001",
@@ -60,7 +60,7 @@ let productosDemo = [
     datos: {
       nombre: "Sintetizador Krog 3000",
       categoria: "Sintetizadores",
-      proveedor: "tuSynth",
+      proveedor: 2,
       descripcion: "sintetizador polifonico",
     },
     sku: "SNT002",
@@ -74,7 +74,7 @@ let productosDemo = [
     datos: {
       nombre: "Origen x6",
       categoria: "Controladores",
-      proveedor: "Midiflux",
+      proveedor: 3,
       descripcion: "controlador midi 61 teclas",
     },
     sku: "CTR001",
@@ -88,7 +88,7 @@ let productosDemo = [
     datos: {
       nombre: "Mini Origen x4",
       categoria: "Controladores",
-      proveedor: "Midiflux",
+      proveedor: 3,
       descripcion: "mini controlador midi 49 teclas",
     },
     sku: "CTR002",

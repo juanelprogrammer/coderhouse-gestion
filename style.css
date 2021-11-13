@@ -17,11 +17,11 @@ nav {
   display: flex;
 }
 
-#importador {
-  text-align: justify;
-  margin-top: 2rem;
-  margin-left: 1rem;
+nav h1 {
+  font-size: 3rem;
+  margin: 0
 }
+
 li {
   display: inline;
 }
@@ -35,9 +35,10 @@ button:hover {
 }
 
 table {
+  box-shadow: 3px 3px 15px #00000069;
   margin: 20px;
-  border-style: solid;
-  border-width: 1px;
+  
+  border-radius: 5px;
   padding: 2rem;
   text-align: justify;
   background-color: #005f96;
@@ -48,6 +49,7 @@ table {
 }
 
 .fa-search{
+  
 font-size: 0.5rem;
 }
 
@@ -57,13 +59,14 @@ button {
   border: none;
   text-decoration: none;
   padding: 7px 7px;
-  border-radius: 10%;
+  border-radius: 3px;
   min-width: 35px;
   font-weight: bold;
+  
 }
 
 .fa-search {
-font-size: 0.9rem;
+font-size: 0.93rem;
 }
 
 h1 {
@@ -75,7 +78,7 @@ h1 {
 }
 
 thead {
-  background-color: #005f96;
+  background-color: #025788;
 }
 
 tr:hover {
@@ -87,25 +90,33 @@ tr:hover {
   font-weight: bold;
 }
 
+.modal-container {
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  display: flex;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  visibility: hidden;
+}
 .modal {
   background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   padding: 20px;
-  border-radius: 1%;
+  border-radius: 3px;
 }
 
-#form-editar {
-  background-color: white;
-  display: block;
-  padding: 20px;
-  max-width: 400px;
-  width: 100%;
-}
-
-#form-editar input,
-#form-crear input,
-#form-pedido input {
-  padding: 10px;
-  margin: 10px
+.mostrar {
+  opacity: 1;
+  visibility: visible;
+  transition: all 0.3s ease;
 }
 
 .modal select{
@@ -114,8 +125,8 @@ tr:hover {
 }
 
 .modal input {
-  
   width: 100%;
+  
 }
 
 .modal button {
@@ -126,34 +137,7 @@ tr:hover {
 #precio-final p {
   /* margin: 15px; */
   font-size: 1.2rem;
-  transition: all 0.5s;
 }
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.modal-container {
-  position: absolute;
-  display: inline-block;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.3);
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100vw;
-  opacity: 0;
-  visibility: hidden;
-}
-.mostrar {
-  opacity: 1;
-  visibility: visible;
-  transition: all 0.2s;
-}
-
 
 #input-cantidad {
   height: 30px;
@@ -161,10 +145,12 @@ input::-webkit-inner-spin-button {
 }
 
 #buscador input {
+  
   border: none;
   background-color: #005f96;
   width: 10%;
   height: 30px;
+  border-radius: 2px;
 }
 
 #buscador {
@@ -172,12 +158,13 @@ input::-webkit-inner-spin-button {
 }
 
 table button {
-font-size: 1rem;
+
 margin: 2px;
 }
 
 #busqueda-productos {
-  position: fixed;
+  box-shadow: 2px 2px 8px #00000069;
+  position: absolute;
   overflow-y: auto;
   background-color: #449DD1;
   width: 48%;
@@ -188,14 +175,14 @@ margin: 2px;
   margin-left: 10px;
   margin-right: 10px;
   padding: 5px;
-  background-color: lightgray;
+  background-color: #1c7bb3;
   font-size: 0.8rem;
   margin-top: 10px;
-  /* border-style: dotted; */
-  border-radius: 1%;
+  margin-bottom: 10px;
+  border-radius: 3px;
 }
 
-#btn-guardar:hover, #btn-aceptar:hover {
+#btn-guardar:hover, #btn-aceptar:hover, .btn-ir:hover{
   background-color: green;
 }
 

@@ -41,6 +41,7 @@ if (historialVentasLs) {
 
 const btnNuevoProd = document.querySelector("#nuevo-producto")
 btnNuevoProd.addEventListener("click", () => altaProducto())
+
 const altaProducto = () => {
   mostrarModal()
   //renderizo el form 
@@ -128,29 +129,50 @@ const altaProducto = () => {
  
 
 
-  //agrego categorías al listado
-  const categorias = []
-  productos.forEach((prod) => {
-    categorias.push(prod.datos.categoria)
-  })
-  //filtro los duplicados
-  const categoriasSinDuplicado = categorias.filter(
-    (v, i) => categorias.indexOf(v) === i
-  )
+ 
+ //muestro las categorías
+ const categorias = tool.getCategorias()
 
-  //muestro las categorías
-
-  if (!categoriasSinDuplicado.length) {
+  if (!categorias.length) {
     const catSelect = document.querySelector("#categorias")
-    catSelect.innerHTML += `<option value="sin-categoria">Se tiene que poder crear categorias :(</option>`
+    catSelect.innerHTML += `<option value="sin-categoria">No existen categorías</option>`
 
   } else {
 
-  categoriasSinDuplicado.forEach((cat) => {
+  categorias.forEach((cat) => {
     const catSelect = document.querySelector("#categorias")
     catSelect.innerHTML += `<option value="${cat}">${cat}</option>`
   })
   }
+  
+  //nueva categoria
+  const btnNuevaCat = document.querySelector('#btn-nueva-categoria')
+    btnNuevaCat.addEventListener('click', (e) => {
+      e.preventDefault()
+    const divNuevaCat = document.querySelector('#div-nueva-categoria')
+    // creo el boton. creandolo con createelement en vez de escribirlo se ve mas lindo para llamarlo 
+    // que creandolo con innerHTML y despues buscarlo con queryselector
+    const btn = document.createElement('button')
+    btn.innerHTML = 'Crear categoría'
+    divNuevaCat.innerHTML = `<input type="text" id="input-nueva-categoria">`
+    divNuevaCat.appendChild(btn)
+    btn.addEventListener('click', (e) => {
+      e.preventDefault()
+      const inputNuevaCat = document.querySelector('#input-nueva-categoria')
+      if(!inputNuevaCat.value) return
+      const catSelect = document.querySelector("#categorias")
+      const option = document.createElement('option')
+      option.value = inputNuevaCat.value
+      option.innerHTML = inputNuevaCat.value
+      catSelect.appendChild(option)
+      catSelect.value = inputNuevaCat.value
+      //vacio el div una vez "creada la cate" (en realidad nunca se crea, solo se asigna al prod y luego al listar las cat aparece)
+      divNuevaCat.innerHTML = ''
+    })
+  
+
+  })
+
 
   //capturo campos
   let costo = document.querySelector("#costo")
@@ -174,11 +196,11 @@ const altaProducto = () => {
   //envío el form
   const btnGuardar = document.querySelector("#btn-guardar")
   const btnCancelar = document.querySelector("#btn-cancelar")
-  //al apretar cancelar
+  
+  //al cancelar tengo que verificar si puse datos en el form. si hay datos, preguntar para evitar que se borren sin querer
   btnCancelar.addEventListener("click", (e) => {
     e.preventDefault()
 
-    //al cancelar tengo que verificar si puse datos en el form. si hay datos, preguntar para evitar que se borren sin querer
     let nombre = document.querySelector("#nombre-producto")
     let sku = document.querySelector("#sku")
     let descripcion = document.querySelector("#descripcion")
@@ -201,19 +223,23 @@ const altaProducto = () => {
 
   //al guardar valido datos y voy tirando lo que falta en el div de validación
   btnGuardar.addEventListener("click", (e) => {
-    let validacionDiv = document.querySelector("#validacion-div")
+    const validacionDiv = document.querySelector("#validacion-div")
     e.preventDefault()
     validacionDiv.innerText = ""
+
+    
+    let proveedor = proveedores.find(prov => prov.nombre === inputProv.value)
+
+    
 
     let nombre = document.querySelector("#nombre-producto")
     let sku = document.querySelector("#sku")
     let categoria = document.querySelector("#categorias")
-    let proveedor = document.querySelector("#input-prov")
     let descripcion = document.querySelector("#descripcion")
     let stock = document.querySelector("#stock-producto")
 
     
-    if (!nombre.value || !sku.value || !proveedor.value) {
+    if (!nombre.value || !sku.value || !proveedor) {
       e.preventDefault()
       validacionDiv.innerText = "Te falta algún dato del producto"
     } else if (!iva.value) {
@@ -222,7 +248,7 @@ const altaProducto = () => {
     } else if (!costo.value) {
       e.preventDefault()
       validacionDiv.innerText = "No podes dar de alta un producto sin costo."
-    } else if (tool.buscarDuplicado(sku.value)) {
+    } else if (tool.buscarDuplicado(undefined,sku.value)) {
       e.preventDefault()
       validacionDiv.innerText = "Ya existe un producto con ese SKU."
     } else {
@@ -232,7 +258,7 @@ const altaProducto = () => {
         datos: {
           nombre: nombre.value,
           categoria: categoria.value,
-          proveedor: proveedor.value,
+          proveedor: proveedor.id,
           descripcion: descripcion.value,
         },
         sku: sku.value,
@@ -244,14 +270,11 @@ const altaProducto = () => {
       })
 
       //confirmo con el usuario
-      if (
-        confirm(
-          `Estás dando de alta ${nuevoProducto.datos.nombre} con ${nuevoProducto.stock} unidades`
-        )
-      ) {
+      if (confirm(`Estás dando de alta ${nuevoProducto.datos.nombre} con ${nuevoProducto.stock} unidades`)) {
         //si va: pusheo, guardo en ls, vuelvo a mostrar la tabla y oculto el modal
         productos.push(nuevoProducto)
         tool.guardarLs("productos", productos)
+        
         mostrarArray(productos)
         modalContainer.classList.toggle("mostrar")
       }
@@ -278,7 +301,7 @@ const mostrarArray = (array) => {
   array.forEach((producto) => {
     let tr = document.createElement("tr")
     let clase = producto.bajoStock ?  "bajo-stock" : ""
-
+    
     tBody.appendChild(tr)
     tr.innerHTML += `
         <td>${producto.id}</td>
@@ -287,14 +310,18 @@ const mostrarArray = (array) => {
         <td>${producto.costo}</td>
         <td>${producto.iva}</td>
         <td class="${clase}">${producto.stock}</td>
-        <td>$ ${producto.precioFinal()}</td>
+        <td>$ ${producto.precioFinal().toFixed(2)}</td>
         <td>${producto.vendidos}</td>
         <td><button title="Vender unidades" onclick="venderById(${producto.id})">
         <i class="fas fa-shopping-cart"></i></button>
         <button title="Comprar a proveedor" onclick="comprarById(${producto.id})">
         <i class="fa fa-plus-square"></i></button>
         <button title="Ver más" onclick="verMas(${producto.id})">
-        <i class="fas fa-info"></i></button></td>
+        <i class="fas fa-info"></i></button>
+        <button title="Editar" onclick="editarById(${producto.id})">
+        <i class="fas fa-edit"></i></button>
+        <button title="Eliminar" onclick="eliminarById(${producto.id})">
+        <i class="fas fa-trash"></i></button></td>
         `
   })
 }
@@ -302,6 +329,7 @@ const mostrarArray = (array) => {
 //muestro los productos
 mostrarArray(productos)
 
+//el ver más me muestra info de llegada
 const verMas = (itemId) => {
 
   const producto = productos.find((prod) => prod.id === itemId)
@@ -320,6 +348,9 @@ const verMas = (itemId) => {
         <h2>${producto.datos.nombre}</h2> 
         
         <h4>No tenes próximos pedidos</h4>  
+        
+        <button class="btn-ir" onclick="window.location.href='./pedidos.html'">Ir a pedidos</button>
+        
         <button id="btn-salir">Salir</button>
         `
   } else {
@@ -352,6 +383,7 @@ const verMas = (itemId) => {
   
 }
 
+//esto es solo para simular proceso de venta. 
 const venderById = (itemId) => {
   //busco el producto según id
   const producto = productos.find((prod) => prod.id === itemId)
@@ -377,8 +409,7 @@ const venderById = (itemId) => {
   })
 }
 
-
-
+//simulo proceso de compra a proveedor. ya está inutil, tiene que vincularse con la fecha de llegada del pedido
 const comprarById = (itemId) => {
   let producto = productos.find((prod) => prod.id === itemId)
   let proveedor = proveedores.find(
@@ -408,82 +439,176 @@ const comprarById = (itemId) => {
   })
 }
 
-//esto todavía no funciona
-const editarById = (itemId) => {
-  let producto = productos.find((prod) => prod.id === itemId)
+
+const editarById = (itemId) => {``
+  const producto = productos.find((prod) => prod.id === itemId)
 
   mostrarModal()
 
-  modalContainer.innerHTML = `
-  <div id="modal" class="modal">
-  <h2>Editar</h2>
-  <form id="form-editar" action="">
-            <label for="nombre">Nombre</label>
-                    <input type="text" id="nombre-producto" value="${
-                      producto.datos.nombre
-                    }">
-            <label for="sku">SKU</label>
-                    <input type="text" id="sku-producto" value="${
-                      producto.sku
-                    }">
-            <label for="categoria">Categoría</label>
-                    <select name="categoria" id="categoria-producto" >
-                          <option value="${producto.datos.categoria}">${
-    producto.datos.categoria
-  }</option>
-            </select>
-            <label for="proveedor">Proveedor</label>
-                    <select name="proveedor" id="proveedor-producto">
-                          <option value="${producto.datos.proveedor}">${
-    producto.datos.proveedor
-  }</option>
-            </select><br>
-            <label for="descripcion">Descripción</label>
+  modalContainer.innerHTML = render.formEditarProducto(producto)
 
-                    <input type="text" id="descripcion-producto" value="${
-                      producto.datos.descripcion
-                    }">
-            <label for="precio-final">Precio Final</label>
-                    <p>$${producto.precioFinal()}</p>
-            <label for="rentabilidad">Rentabilidad</label> 
-                    <input type="number" id="rentabilidad-producto" value="${
-                      producto.rentabilidad
-                    }">
-            <label for="iva">IVA</label> 
-                    <input type="number" id="iva-producto" value="${
-                      producto.iva
-                    }">
-            <label for="stock">Stock Actual</label> 
-                    <p id="producto-stock">${producto.stock}</p>
-            <label for="vendidos">Vendidos</label> 
-                    <p>${producto.vendidos}</p>
-            <button id="btn-guardar">Guardar</button>
-            <button id="btn-cancelar">Cancelar</button>
-  </form>
-</div>`
 
-  let nombre = document.querySelector("#nombre-producto").value
-  let categoria = document.querySelector("#categoria-producto").value
-  let proveedor = document.querySelector("#proveedor-producto").value
-  let descripcion = document.querySelector("#descripcion-producto").value
-  let sku = document.querySelector("#sku-producto").value
-  let iva = document.querySelector("#iva-producto").value
-  let stock = document.querySelector("#producto-stock").value
+  //listo todos los proveedores 
+  const provSelect = document.querySelector('#proveedor-producto')
+  proveedores.forEach((prov) => {
+    if(prov.id == producto.datos.proveedor) return
+    provSelect.innerHTML += `<option value="${prov.id}">${prov.nombre}</option>`
+  })
 
+
+
+
+  //muestro las categorías
+  const categorias = tool.getCategorias()
+  if (!categorias.length) {
+    const catSelect = document.querySelector("#categoria-producto")
+    catSelect.innerHTML += `<option value="sin-categoria">No existen categorías</option>`
+
+  } else {
+
+  categorias.forEach((cat) => {
+    const catSelect = document.querySelector("#categoria-producto")
+    if(cat == producto.datos.categoria) return
+    catSelect.innerHTML += `<option value="${cat}">${cat}</option>`
+  })
+  }
+  
+  //nueva categoria
+  const btnNuevaCat = document.querySelector('#btn-nueva-categoria')
+    btnNuevaCat.addEventListener('click', (e) => {
+      e.preventDefault()
+    const divNuevaCat = document.querySelector('#div-nueva-categoria')
+    // creo el boton. creandolo con createelement en vez de escribirlo se ve mas lindo para llamarlo 
+    // que creandolo con innerHTML y despues buscarlo con queryselector
+    const btn = document.createElement('button')
+    btn.innerHTML = 'Crear categoría'
+    divNuevaCat.innerHTML = `<input type="text" id="input-nueva-categoria">`
+    divNuevaCat.appendChild(btn)
+    btn.addEventListener('click', (e) => {
+      e.preventDefault()
+      const inputNuevaCat = document.querySelector('#input-nueva-categoria')
+      if(!inputNuevaCat.value) return
+      const catSelect = document.querySelector("#categoria-producto")
+      const option = document.createElement('option')
+      option.value = inputNuevaCat.value
+      option.innerHTML = inputNuevaCat.value
+      catSelect.appendChild(option)
+      catSelect.value = inputNuevaCat.value
+      //vacio el div una vez "creada la cate" (en realidad nunca se crea, solo se asigna al prod y luego al listar las cat aparece)
+      divNuevaCat.innerHTML = ''
+    })
+  
+
+  })
+
+
+  const rentabilidadInput = document.querySelector('#rentabilidad-producto')
+  const costoInput = document.querySelector('#costo-producto')
+  const ivaInput = document.querySelector('#iva-producto')
+  const precioFinal = document.querySelector('#producto-preciofinal')
+
+  //controladores de los input asoaciados al precio final
+  rentabilidadInput.addEventListener("input", () => {
+    
+    const rentabilidad = rentabilidadInput.value
+    const iva = ivaInput.value
+    const costo = costoInput.value
+
+    if (costo && iva != undefined) {
+      precioFinal.innerHTML = "$"
+      precioFinal.innerHTML += parseFloat(
+        tool.calcularPrecioFinal(
+          parseFloat(costo),
+          parseFloat(iva),
+          parseFloat(rentabilidad))
+      ).toFixed(2)
+    }
+  })
+  costoInput.addEventListener("input", () => {
+    
+    const rentabilidad = rentabilidadInput.value
+    const iva = ivaInput.value
+    const costo = costoInput.value
+   
+    if (rentabilidad && iva != undefined) {
+      precioFinal.innerHTML = "$"
+      precioFinal.innerHTML += parseFloat(
+        tool.calcularPrecioFinal(
+          parseFloat(costo),
+          parseFloat(iva),
+          parseFloat(rentabilidad))
+      ).toFixed(2)
+    }
+  })
+  ivaInput.addEventListener("input", () => {
+    
+    const rentabilidad = rentabilidadInput.value
+    const iva = ivaInput.value
+    const costo = costoInput.value
+
+    if (rentabilidad && costo != undefined) {
+      precioFinal.innerHTML = "$"
+      precioFinal.innerHTML += parseFloat(
+        tool.calcularPrecioFinal(
+          parseFloat(costo),
+          parseFloat(iva),
+          parseFloat(rentabilidad))
+      ).toFixed(2)
+    }
+  })
 
 
   const btnGuardar = document.getElementById("btn-guardar")
   btnGuardar.addEventListener("click", (e) => {
+    const validacionDiv = document.querySelector("#validacion-div")
+
+    const prodIndex = productos.findIndex((prod) => prod.id === producto.id)
+
+    const nombre = document.querySelector("#nombre-producto").value
+    const categoria = document.querySelector("#categoria-producto").value
+    const proveedor = document.querySelector("#proveedor-producto").value
+    const descripcion = document.querySelector("#descripcion-producto").value
+    const sku = document.querySelector("#sku-producto").value
+    const iva = document.querySelector("#iva-producto").value
+    const costo = document.querySelector('#costo-producto').value
+    const rentabilidad = document.querySelector('#rentabilidad-producto')
+    
+    const duplicado = tool.buscarDuplicado(producto, sku)
+    
+    
+    
     e.preventDefault()
+    if (!nombre || !sku || !proveedor) {
+      e.preventDefault()
+      validacionDiv.innerText = "Te falta algún dato del producto"
+    } else if (!iva) {
+      e.preventDefault()
+      validacionDiv.innerText = "Necesitas indicar el % de IVA."
+    } else if (!costo) {
+      e.preventDefault()
+      validacionDiv.innerText = "No podes dar de alta un producto sin costo."
+    } else if (duplicado) {
+      e.preventDefault()
+      validacionDiv.innerText = "Ya existe un producto con ese SKU."
+    } else {
+    e.preventDefault()
+    
     producto.datos.nombre = nombre
     producto.datos.categoria = categoria
-    producto.datos.proveedor = proveedor
+    producto.datos.proveedor = parseInt(proveedor)
     producto.datos.descripcion = descripcion
+    
     producto.sku = sku
-    producto.iva = iva
-    producto.stock = stock
+    
+    producto.iva = parseFloat(iva)
+    producto.costo = parseFloat(costo)
+    producto.rentabilidad = parseFloat(rentabilidad.value)
 
-
+    productos.splice(prodIndex, 1, producto)
+    tool.guardarLs('productos', productos)
+    modalContainer.classList.toggle("mostrar")
+    mostrarArray(productos)
+    }
   })
 
   const btnCancelar = document.getElementById("btn-cancelar")
@@ -493,11 +618,7 @@ const editarById = (itemId) => {
   })
 }
 
-const buscar = (busqueda) => {
-  return productos.filter((prod) =>
-    prod.datos.nombre.toLowerCase().includes(busqueda)
-  )
-}
+
 
 //renderiza la busqueda debajo del buscador
 const listaBusqueda = document.querySelector('#busqueda-productos')
@@ -505,7 +626,8 @@ const mostrarBusqueda = (busqueda) => {
   listaBusqueda.innerHTML = ''
   busqueda.forEach((prod) => {
     listaBusqueda.innerHTML += `<div class="resultado-busqueda">
-    <h3>${prod.datos.nombre}<br></h3>
+    <h3>${prod.datos.nombre}</h3>
+    <button class="btn-ir" onclick="editarById(${prod.id})">Editar</button>
     <h4>SKU: ${prod.sku}</h>
     <p>Stock: ${prod.stock}</p>
     <p>Precio: $${prod.precioFinal()}</p>
@@ -527,17 +649,16 @@ inputBuscador.on("input", () => {
   } else {
     const busqueda = inputBuscador.val().trim().toLowerCase()
 
-    mostrarBusqueda(buscar(busqueda))
-    //mostrarArray(buscar(busqueda))
+    mostrarBusqueda(tool.buscarProd(busqueda))
+    
   }
 })
 
 //para buscar también podes hacer click en la lupita y mostrar tu busqueda en la tabla
 const btnBuscador = document.querySelector("#btn-buscar")
 btnBuscador.addEventListener("click", () => {
-  const busqueda = buscar(inputBuscador.value)
+  const busqueda = tool.buscarProd(inputBuscador.value)
   listaBusqueda.html('')
   inputBuscador.value = ""
   mostrarArray(busqueda)
 })
-

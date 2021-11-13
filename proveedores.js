@@ -22,8 +22,6 @@ const mostrarModal = () => {
   modalContainer.classList.toggle("mostrar")
 }
 
-
-
 const mostrarArray = (array) => {
   const tBody = $("#tbody-mostrar")
 
@@ -100,11 +98,7 @@ mostrarMenos.click(() => {
 
 mostrarArray(proveedores)
 
-const buscar = (busqueda) => {
-  return proveedores.filter((prov) =>
-    prov.nombre.toLowerCase().includes(busqueda)
-  )
-}
+
 
 //renderiza la busqueda debajo del buscador
 const listaBusqueda = document.querySelector("#busqueda-productos")
@@ -116,7 +110,7 @@ const mostrarBusqueda = (busqueda) => {
       <h3>${prov.nombre}</h3>
      <select name="productos-proveedor" id="productos-${prov.nombre}">
       </select>
-    </div>`
+      <button class="btn-ir" onclick="window.location.href='./pedidos.html'">Ir a pedidos</button>    </div>`
     let productosProveedor = prov.listarProductos()
     const selectProductos = document.querySelector(`#productos-${prov.nombre}`)
     if (!productosProveedor.length) {
@@ -125,20 +119,28 @@ const mostrarBusqueda = (busqueda) => {
     productosProveedor.forEach((prod) => {
       selectProductos.innerHTML += `<option value="">${prod.datos.nombre}  $ ${prod.costo}</option>`
     })
-  })
+  })``
 }
 
 //event listener del input de busqueda. a medida que escribis llama a mostrarBusqueda()
-const inputBuscador = document.querySelector("#input-busqueda")
-inputBuscador.addEventListener("input", () => {
-  if (inputBuscador.value === "") {
+const inputBuscador = $("#input-busqueda")
+inputBuscador.on("input", () => {
+  if (inputBuscador.val() === "") {
     listaBusqueda.innerHTML = ""
   } else {
-    const busqueda = inputBuscador.value.trim().toLowerCase()
+    const busqueda = inputBuscador.val().trim().toLowerCase()
 
-    mostrarBusqueda(buscar(busqueda))
+    mostrarBusqueda(tool.buscarProv(busqueda))
   }
 })
+
+inputBuscador.on('focus', () => inputBuscador.animate({'width': '50%'}, 250)) 
+
+inputBuscador.on('blur', () => {
+  if(inputBuscador.val() === '') {inputBuscador.animate({'width': '10%'}, 100)}
+})
+
+
 
 const altaProveedor = () => {
   mostrarModal()
