@@ -108,68 +108,6 @@ class Render {
     return div.innerHTML;
 
   }
-  formEditarPedido(pedidoId, prodPedidos) {
-    const div = document.createElement("div");
-    const pedido = pedidos.find((ped) => ped.id === pedidoId)
-    const proveedor = proveedores.find((prov) => prov.id === pedido.proveedor)
-    div.innerHTML = `<div id="modal" class="modal">
-    <form id="form-pedido">
-                    <span>Proveedor:</span>
-                    <p id="proveedor-nombre">${proveedor.nombre}</p>
-                    <label for="proveedores">Cambiar proveedor:</label>
-                    <div class="dropdown">
-                    <input type="text" autocomplete="off" placeholder="Buscar... (Doble Click para mostrar todos)" id="input-prov">
-                    <div id="resultado-busqueda-prov">
-                    
-                    
-                    </div>
-                  </div>
-                   
-                    <label for="codigo">Codigo</label>
-                            <input type="text" id="codigo-pedido" value="${pedido.codigo}"><br>
-                    <label for="origen">Origen</label>
-                    <input type="text" id="origen-pedido" value="${pedido.origen}"><br>
-                    
-                    
-                    <label for="cantidad-producto">Cantidad</label>
-                    <input type="number" id="cantidad">
-                    
-                    <label for="productos">Producto</label>
-                    <div class="dropdown">
-                    <input type="text" autocomplete="off" placeholder="Buscar... (Doble Click para mostrar todos)" id="input-prod">
-                    <div id="resultado-busqueda-prod">
-                    
-                    
-                    </div>
-                  </div>
-                  <br>
-                    <button id="btn-agregar">Agregar</button>
-                    <button id="btn-borrar">Borrar</button>
-                    <div id="productos-agregados">
-                      <table id="tabla-productos">
-                          <thead>
-                              <tr>
-                                  <th>ID</th>
-                                  <th>Cantidad</th>
-                                  <th>Producto</th>
-                              </tr>
-                          </thead>
-                              
-                      </table>
-                    </div>
-                    
-                    <button id="ingreso-inmediato">Ingreso Inmediato</button><br>
-                    <label for="arribo">Fecha estimada de arribo:</label> 
-                            <input type="date" id="fecha-arribo"><br>
-                    <label for="observaciones">Observaciones</label><br>
-                            <textarea id="observaciones" rows="10" cols="50"></textarea><br>
-                    <div id="validacion-div"></div>
-                    <button id="btn-guardar">Guardar</button>
-                    <button id="btn-cancelar">Cancelar</button>
-            </form>
-            </div>`
-            return div.innerHTML
-  }
   formNuevoPedido() {
     return `
         <div id="modal" class="modal">

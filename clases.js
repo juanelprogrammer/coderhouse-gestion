@@ -107,8 +107,9 @@ class Pedido {
     this.productos = obj.productos
     this.observaciones = obj.observaciones
     this.ingresado = obj.ingresado
-    this.fechaIngreso = ''    
+    this.fechaIngreso = obj.fechaIngreso
   }
+
   diasFaltan(ms) {
     const arribo = new Date(this.arribo)
     const hoy = new Date()
@@ -124,19 +125,22 @@ class Pedido {
 
   //estaria bueno que sea una propiedad pero no puedo llamar al metodo diasFaltan desde el constructor (creo)
   arribado() {
-    return this.diasFaltan('ms') < 0
+    //es true si faltan menos de 24hs para que ingrese
+    return this.diasFaltan('ms') < (1000 * 60 * 60 * 24)
   }
 
 
   ingresar() {
     
-    if(this.arribado() && !this.ingresado) {
+    if(!this.ingresado) {
       const proveedor = proveedores.find((prov) => prov.id === this.proveedor)
       this.productos.forEach((prod) => {
         //compro cada producto al proveedor para ingresarlo a mi stock
-        proveedor.comprar(prod.productoId, prod.cantidad)
+        proveedor.comprar(prod.productoId, parseInt(prod.cantidad))
         //marco el pedido como ingresado
         this.ingresado = true
+        const fechaIngreso = new Date()
+        this.fechaIngreso = parseInt(fechaIngreso.getTime())
         //actulizo ls
         tool.guardarLs("productos", productos)
         tool.guardarLs("pedidos", pedidos)

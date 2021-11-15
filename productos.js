@@ -314,8 +314,6 @@ const mostrarArray = (array) => {
         <td>${producto.vendidos}</td>
         <td><button title="Vender unidades" onclick="venderById(${producto.id})">
         <i class="fas fa-shopping-cart"></i></button>
-        <button title="Comprar a proveedor" onclick="comprarById(${producto.id})">
-        <i class="fa fa-plus-square"></i></button>
         <button title="Ver más" onclick="verMas(${producto.id})">
         <i class="fas fa-info"></i></button>
         <button title="Editar" onclick="editarById(${producto.id})">
@@ -335,49 +333,50 @@ const verMas = (itemId) => {
   const producto = productos.find((prod) => prod.id === itemId)
   const arribos = producto.fechaLlegada()
   
+  
+
   const fechaArribos = arribos.map((arribo) => {
     
     return tool.formatoDate(arribo)
     
   })
+
+  
+  
+  
   mostrarModal()
   if (!arribos.length) {
     
-
+    
     modalContainer.innerHTML = ` <div id="modal" class="modal">
-        <h2>${producto.datos.nombre}</h2> 
+    <h2>${producto.datos.nombre}</h2> 
+    
+    <h4>No tenes próximos pedidos</h4>  
+    
+    <button class="btn-ir" onclick="window.location.href='./pedidos.html'">Ir a pedidos</button>
         
-        <h4>No tenes próximos pedidos</h4>  
-        
-        <button class="btn-ir" onclick="window.location.href='./pedidos.html'">Ir a pedidos</button>
-        
-        <button id="btn-salir">Salir</button>
-        `
+    <button id="btn-salir">Salir</button>
+    `
   } else {
     
-
+    
     modalContainer.innerHTML = ` <div id="modal" class="modal">
-        <h2>${producto.datos.nombre}</h2> 
-        
-        <h4>Faltan ${producto.fechaLlegada('dias')} días para que ingrese</h4>  
-       
-        <h3>Próximos arribos:</h3>
-          <p>${fechaArribos}</p>
-                  
+    <h2>${producto.datos.nombre}</h2> 
+    
+    <h3>Faltan ${producto.fechaLlegada('dias')} días para que ingrese</h4>  
+    
+    <h3>Próximos arribos:</h3>
+    <p>${fechaArribos}</p>
+    
                   
                   <button id="btn-salir">Salir</button>
-    
-      </div>`
+                  
+                  </div>`
 
   }
-  // const divHistorial = document.querySelector('#historial-venta')
-  // historial.forEach((hist) => {
-  //   divHistorial.innerHTML += `
-  //   <p>Fecha: ${hist.fecha} Cantidad: ${hist.cantidad}</p>
-  //   `
-  // })
-      const salir = document.getElementById("btn-salir")
-      salir.addEventListener("click", () => {
+                
+                const salir = document.getElementById("btn-salir")
+                salir.addEventListener("click", () => {
         modalContainer.classList.toggle("mostrar")
       })
   
@@ -618,6 +617,33 @@ const editarById = (itemId) => {``
   })
 }
 
+const eliminarById = (productoId) => {
+  const productoIndex = productos.findIndex((prod) => prod.id == productoId)
+  mostrarModal()
+
+  modalContainer.innerHTML = render.confirmEliminar()
+  
+  const btnAceptar = document.querySelector('#btn-aceptar')
+  const btnCancelar = document.querySelector('#btn-cancelar')
+  
+  btnAceptar.addEventListener('click', (e) => {
+    e.preventDefault()
+    productos.splice(productoIndex,1)
+    tool.guardarLs('productos', productos)
+    modalContainer.classList.toggle("mostrar")
+    mostrarArray(productos)
+  
+  })
+  
+  btnCancelar.addEventListener('click', (e) => {
+    e.preventDefault()
+    modalContainer.classList.toggle("mostrar")
+  
+  })
+  
+  
+}
+
 
 
 //renderiza la busqueda debajo del buscador
@@ -625,13 +651,13 @@ const listaBusqueda = document.querySelector('#busqueda-productos')
 const mostrarBusqueda = (busqueda) => {
   listaBusqueda.innerHTML = ''
   busqueda.forEach((prod) => {
-    listaBusqueda.innerHTML += `<div class="resultado-busqueda">
+    listaBusqueda.innerHTML += `<a href="#" title="Click para editar" onclick="editarById(${prod.id})"><div class="resultado-busqueda">
     <h3>${prod.datos.nombre}</h3>
-    <button class="btn-ir" onclick="editarById(${prod.id})">Editar</button>
+    
     <h4>SKU: ${prod.sku}</h>
     <p>Stock: ${prod.stock}</p>
-    <p>Precio: $${prod.precioFinal()}</p>
-  </div>`
+    <p>Precio: $${prod.precioFinal().toFixed(2)}</p>
+  </div></a>`
   })
 }
 
