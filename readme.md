@@ -1,6 +1,6 @@
 ¡Hola!
 
-Con algunos años vendiendo por Mercado Libre para un local fui descubriendo muchas funciones que las app de gestión de ML no tienen.
+Con algunos años vendiendo por Mercado Libre para tiendas importadoras fui descubriendo muchas funciones que las app de gestión de ML no tienen.
 
 Al tratar con pocos productos es facil, masssssomenos estimás cuando te vuelve a entrar y con lógica oferta-demanda vas viendo el precio que le ponés.
 
@@ -12,4 +12,4 @@ La intención final de esta app NO es manejar el stock y precio, ya hay sistemas
 
 La intención de esta app, en cambio, es saber en todo momento cuanto falta para que un producto vuelva a ingresar. 
 
-Y así (desarrollando a futuro) poder alertar si, por ejemplo: se vendieron muchas unidades faltando mucho tiempo para el próximo arribo, o si me está ingresando la semana que viene y tengo cien mil unidades de un producto que no vendí.
+Y así poder alertar si, por ejemplo: se vendieron muchas unidades faltando mucho tiempo para el próximo arribo o si me está ingresando la semana que viene y tengo cien mil unidades de un producto que no vendí.
